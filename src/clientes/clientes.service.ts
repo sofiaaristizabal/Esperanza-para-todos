@@ -1,10 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cliente } from './entities/cliente.entity';
 import { UpdateOrganoDto } from 'src/organos/dto/update-organo.dto';
+import { OrganosService } from 'src/organos/organos.service';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
 
@@ -13,7 +14,8 @@ export class ClientesService {
 
   constructor(@InjectRepository( Cliente)
   private readonly clienteRepository: Repository<Cliente>,
-  private readonly usersService: UsersService 
+  private readonly usersService: UsersService,
+  private readonly organosService: OrganosService
   )
   {}
 
@@ -67,11 +69,53 @@ export class ClientesService {
     const cliente = this.findOne(id); 
     let flag = false; 
     let i = 0;
-    while(flag=false && i<insecureCountries.length){
+    while(flag===false && i<insecureCountries.length-1){
      
-      if
+      if((await cliente).country === insecureCountries[i]){
+        flag = true; 
+      }
+
+      i++;
     }
-     return
+
+    if(flag===true){
+      let min = Math.ceil(0);
+      let max = Math.floor(insecureCountries.length);
+      let randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
+      
+      await this.clienteRepository.update(id, {country: secureCountries[randomNumber]});
+    }
+     return (await cliente).country; 
   } 
+
+  async comprarOrgano(id:string, organoId:string){
+
+    const cliente = await this.findOne(id);
+    if(!cliente){
+      throw new NotFoundException(`the client with id #${id} was not found `)
+    }
+    
+    const organo =  await this.organosService.findOne(organoId);
+    if(!organo){
+      throw new NotFoundException(`the organ with id #${id} was not found `)
+    } 
+
+    if(organo.isAvailable === false){
+      throw new BadRequestException(`The organ with id #${organoId} is not available for purchase.`);
+    }
+
+    if(organo.isGood === false){
+      throw new BadRequestException(`The organ with id #${organoId} is no longer good`);
+    }
+    
+    organo.cliente = cliente;
+    await this.organosService.update(organoId, organo);
+
+    cliente.organos.push(organo);
+    await this.clienteRepository.save(cliente); 
+
+
+
+  }
 }
 

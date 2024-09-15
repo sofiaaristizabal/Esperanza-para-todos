@@ -34,4 +34,19 @@ export class ClientesController {
   remove(@Param('id') id: string) {
     return this.clientesService.remove(id);
   }
+
+  @Post('relocalizacion')
+  async relocalizacion(
+    @Body('id') id: string,
+    @Body('insecureCountries') insecureCountries: string[],
+    @Body('secureCountries') secureCountries: string[],
+  ) {
+    const updatedCountry = await this.clientesService.relocalizacion(id, insecureCountries, secureCountries);
+    return { updatedCountry };
+  }
+
+  @Post('Comprar')
+  comprarOrgano(@Body('id') id:string, @Body('organoId') organoId:string){
+    return this.clientesService.comprarOrgano(id, organoId)
+  }
 }
