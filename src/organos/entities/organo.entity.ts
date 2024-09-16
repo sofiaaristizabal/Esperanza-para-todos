@@ -20,11 +20,11 @@ export class Organo {
     @Column('text', { array: true })
     HLA: string[]; 
 
-    @Column('boolean')
-    isAvailable:boolean;
+    @Column('text')
+    isAvailable:string;
 
-    @Column('boolean')
-     isGood: boolean; 
+    @Column('text')
+     isGood: string; 
 
     @ManyToOne(()=>Proveedor, (proveedor)=>proveedor.organos)
     proveedor:Proveedor;

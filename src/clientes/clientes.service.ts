@@ -100,11 +100,11 @@ export class ClientesService {
       throw new NotFoundException(`the organ with id #${id} was not found `)
     } 
 
-    if(organo.isAvailable === false){
+    if(organo.isAvailable === 'false'){
       throw new BadRequestException(`The organ with id #${organoId} is not available for purchase.`);
     }
 
-    if(organo.isGood === false){
+    if(organo.isGood === 'false'){
       throw new BadRequestException(`The organ with id #${organoId} is no longer good`);
     }
     

@@ -8,10 +8,13 @@ import { UsersService } from 'src/users/users.service';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { UsersModule } from 'src/users/users.module';
+import { OrganosModule } from 'src/organos/organos.module';
+import { OrganosService } from 'src/organos/organos.service';
+import { Organo } from 'src/organos/entities/organo.entity';
 
 @Module({
   controllers: [ClientesController],
-  providers: [ClientesService, UsersService],
-  imports:[TypeOrmModule.forFeature([Cliente, User]), UsersModule]
+  providers: [ClientesService, UsersService, OrganosService],
+  imports:[TypeOrmModule.forFeature([Cliente, User, Organo]), UsersModule, OrganosModule]
 })
 export class ClientesModule {}

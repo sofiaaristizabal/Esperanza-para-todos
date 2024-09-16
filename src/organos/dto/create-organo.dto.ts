@@ -1,4 +1,4 @@
-import { IsString,  IsNotEmpty, MinLength, IsEmail, IsArray, ArrayNotEmpty,IsDate, MinDate, MaxDate } from "class-validator";
+import { IsString,  IsNotEmpty, MinLength, IsEmail, IsArray, ArrayNotEmpty,IsDate, MinDate, MaxDate, isBoolean, IsBoolean, IsBooleanString} from "class-validator";
 
 export class CreateOrganoDto {
 
@@ -13,5 +13,11 @@ export class CreateOrganoDto {
 
     @IsArray()
     HLA:string[];
+
+    @IsBooleanString()
+    isAvailable:string;
+
+    @IsBooleanString()
+    isGood:string;
 
 }

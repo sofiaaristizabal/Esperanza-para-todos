@@ -7,6 +7,7 @@ import { Organo } from './entities/organo.entity';
 @Module({
   controllers: [OrganosController],
   providers: [OrganosService],
-  imports: [TypeOrmModule.forFeature([Organo])]
+  imports: [TypeOrmModule.forFeature([Organo])],
+  exports:[]
 })
 export class OrganosModule {}
