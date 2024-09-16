@@ -11,17 +11,11 @@ export class UseRoleGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const user = request.user;
 
-  
-    if (user instanceof Cliente) {
-      console.log('User is a Cliente');
-      return true;
-    }
-
     if (user instanceof Proveedor) {
       console.log('User is a Proveedor');
       return true;
     }
-    
+
     throw new Error('Unauthorized');
   }
 }

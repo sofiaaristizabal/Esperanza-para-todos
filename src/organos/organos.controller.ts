@@ -1,7 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { OrganosService } from './organos.service';
 import { CreateOrganoDto } from './dto/create-organo.dto';
 import { UpdateOrganoDto } from './dto/update-organo.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { UseRoleGuard } from 'src/usuario-roles/usuario-roles.guard';
+import { getUser } from 'src/users/decorators/getUser.decorator';
+import { Proveedor } from 'src/proveedores/entities/proveedore.entity';
 
 
 @Controller('organos')
@@ -9,8 +13,9 @@ export class OrganosController {
   constructor(private readonly organosService: OrganosService) {}
 
   @Post()
-  create(@Body() createOrganoDto: CreateOrganoDto) {
-    return this.organosService.create(createOrganoDto);
+  @UseGuards(AuthGuard(), UseRoleGuard)
+  create(@Body() createOrganoDto: CreateOrganoDto, @getUser() proveedor: Proveedor) {
+    return this.organosService.create(createOrganoDto, proveedor);
   }
 
   @Get()

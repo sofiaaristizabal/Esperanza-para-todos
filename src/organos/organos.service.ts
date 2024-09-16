@@ -7,7 +7,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Cliente } from 'src/clientes/entities/cliente.entity';
 import { Proveedor } from 'src/proveedores/entities/proveedore.entity';
 
-
 @Injectable()
 export class OrganosService {
 
@@ -16,9 +15,9 @@ export class OrganosService {
    )
    {}  
 
-  async create(createOrganoDto: CreateOrganoDto) {
+  async create(createOrganoDto: CreateOrganoDto, proveedor: Proveedor) {
 
-    const organo = this.organoRepository.create(createOrganoDto);
+    const organo = this.organoRepository.create({...createOrganoDto, proveedor});
     await this.organoRepository.save(organo)
     return organo;
   }

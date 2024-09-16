@@ -10,7 +10,6 @@ export class ClientesController {
   constructor(private readonly clientesService: ClientesService) {}
 
   @Post()
-  @UseGuards(AuthGuard())
   create(@Body() createClienteDto: CreateClienteDto) {
     return this.clientesService.create(createClienteDto);
   }
