@@ -7,6 +7,8 @@ import { User } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { LoginUserDto } from './dto/login-dto';
 import { JwtService } from '@nestjs/jwt';
+import { Cliente } from 'src/clientes/entities/cliente.entity';
+import { Proveedor } from 'src/proveedores/entities/proveedore.entity';
 
 @Injectable()
 export class UsersService {
@@ -25,7 +27,7 @@ export class UsersService {
       const user = this.userRepository.create(createUserDto);
       user.password = await bcrypt.hash(user.password, 10);
       await this.userRepository.save(user);
-      const {fullName, email, phoneNumber, clientes, proveedores} = user;
+      const {fullName, email, phoneNumber} = user;
       return user;
     } 
     catch(err){
@@ -68,26 +70,72 @@ export class UsersService {
     return user;
   }
 
-  async login (loginUserDto: LoginUserDto){
-
+  async login(loginUserDto: LoginUserDto) {
     try {
-      const {email, password} = loginUserDto;
-      const user = await this.userRepository.findOneBy({email})
-      if(!user){
+      const { email, password, roles } = loginUserDto;
+      
+      // Use a query to check both User and its child entities
+      const user = await this.userRepository
+        .createQueryBuilder('user')
+        .where('user.email = :email', { email })
+        .getOne();
+      if (!user) {
         throw new UnauthorizedException('Invalid credentials');
       }
-
       const isValid = bcrypt.compareSync(password, user.password);
-      if(!isValid){
+      if (!isValid) {
         throw new UnauthorizedException('Invalid credentials')
       }
-
-      const {fullName} = user;
-      const jwt = this.jwtService.sign({email, fullName});
-      return {user: {fullName, email, jwt}};
-    } catch(err){
+      // Determine user type
+      const {userType, associatedId} = await this.determineUserType(user.id, user.roles);
+      const { fullName } = user;
+      const jwt = this.jwtService.sign({
+        email, 
+        fullName, 
+        type: userType
+      });
+      return { 
+        user: { 
+          fullName, 
+          email, 
+          type: userType, 
+          jwt,
+          ... (associatedId && { [`${userType.toLowerCase()}Id`]: associatedId })
+        } 
+      };
+    } catch(err) {
       console.log(err);
       throw new UnauthorizedException(err.detail);
     }
   }
+  async determineUserType(userId: string, type: string): Promise<{ userType: string, associatedId?: string }> {
+    if (type === 'Proveedor') {
+      const user = await this.userRepository
+        .createQueryBuilder('user')
+        .innerJoin(Proveedor, 'proveedor', 'proveedor.email = user.email')
+        .where('user.id = :userId', { userId })
+        .select('proveedor.id', 'proveedorId')
+        .getRawOne();
+  
+      if (user) {
+        return { userType: 'Proveedor', associatedId: user.proveedorId };
+      }
+    }
+  
+    if (type === 'Cliente') {
+      const user = await this.userRepository
+        .createQueryBuilder('user')
+        .innerJoin(Cliente, 'cliente', 'cliente.email = user.email')
+        .where('user.id = :userId', { userId })
+        .select('cliente.id', 'clienteId')
+        .getRawOne();
+  
+      if (user) {
+        return { userType: 'Cliente', associatedId: user.clienteId };
+      }
+    }
+  
+    return { userType: 'User' };
+  }
+  
 }

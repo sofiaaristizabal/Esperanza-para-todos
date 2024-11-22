@@ -17,14 +17,20 @@ export class Organo {
     @Column('text')
     bloodType: string;
 
+    @Column('text')
+    name: string;
+
+    @Column()
+    price:string;
+
     @Column('text', { array: true })
     HLA: string[]; 
 
-    @Column('text')
+    @Column('text', {nullable:true})
     isAvailable:string;
 
     @Column('text')
-     isGood: string; 
+    isGood: string; 
 
     @ManyToOne(()=>Proveedor, (proveedor)=>proveedor.organos)
     proveedor:Proveedor;

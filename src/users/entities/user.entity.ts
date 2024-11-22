@@ -1,5 +1,5 @@
 import { MinLength } from "class-validator";
-import { Entity, Column, TableInheritance, PrimaryGeneratedColumn, OneToMany} from "typeorm";
+import { Entity, Column, TableInheritance, PrimaryGeneratedColumn, OneToMany, OneToOne, JoinColumn} from "typeorm";
 import { Cliente } from "src/clientes/entities/cliente.entity";
 import { Proveedor } from "src/proveedores/entities/proveedore.entity";
 
@@ -28,9 +28,7 @@ export class User {
     @Column('text')
     phoneNumber:string;
 
-    @OneToMany(() => Cliente, (cliente) => cliente.user)
-    clientes:Cliente[];
-    
-    @OneToMany(() => Proveedor, (proveedor) => proveedor.user)
-    proveedores:Proveedor[];
+    @Column('text', { nullable: true })
+    roles: string;  
+
 }

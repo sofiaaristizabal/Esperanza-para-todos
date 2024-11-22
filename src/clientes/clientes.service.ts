@@ -8,6 +8,7 @@ import { UpdateOrganoDto } from 'src/organos/dto/update-organo.dto';
 import { OrganosService } from 'src/organos/organos.service';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class ClientesService {
@@ -15,13 +16,37 @@ export class ClientesService {
   constructor(@InjectRepository( Cliente)
   private readonly clienteRepository: Repository<Cliente>,
   private readonly usersService: UsersService,
-  private readonly organosService: OrganosService
+  //private readonly organosService: OrganosService
   )
   {}
 
   async create(createClienteDto: CreateClienteDto) {
-    const user = await this.usersService.create(createClienteDto); 
-    const cliente = this.clienteRepository.create({ ...createClienteDto, user});  
+
+    const userData = {
+      email: createClienteDto.email,
+      password: createClienteDto.password,
+      fullName: createClienteDto.fullName,
+      phoneNumber: createClienteDto.phoneNumber,
+      roles: 'Cliente'
+    };
+    const user = await this.usersService.create(userData); 
+    
+    const clienteData: Partial<Cliente> = {
+      email: createClienteDto.email,
+      password: createClienteDto.password,
+      fullName: createClienteDto.fullName,
+      phoneNumber: createClienteDto.phoneNumber,
+      roles: 'Cliente',
+      type: 'Cliente',
+      dateOfBirth: createClienteDto.dateOfBirth,
+      country: createClienteDto.country,
+      contactPerson: createClienteDto.contactPerson,
+    };
+
+    const cliente = this.clienteRepository.create(clienteData);
+
+    cliente.password = await bcrypt.hash(cliente.password, 10);
+   
     await this.clienteRepository.save(cliente);
     const {fullName, email, dateOfBirth, bloodType, HLA, country, organos} = cliente;
     return cliente;
@@ -88,6 +113,7 @@ export class ClientesService {
      return (await cliente).country; 
   } 
 
+  /* 
   async comprarOrgano(id:string, organoId:string){
 
     const cliente = await this.findOne(id);
@@ -116,6 +142,6 @@ export class ClientesService {
 
 
 
-  }
+  } */
 }
 

@@ -14,7 +14,7 @@ import { Organo } from 'src/organos/entities/organo.entity';
 
 @Module({
   controllers: [ClientesController],
-  providers: [ClientesService, UsersService, OrganosService],
-  imports:[TypeOrmModule.forFeature([Cliente, User, Organo]), UsersModule, OrganosModule]
+  providers: [ClientesService, UsersService],
+  imports:[TypeOrmModule.forFeature([Cliente, User]), UsersModule]
 })
 export class ClientesModule {}

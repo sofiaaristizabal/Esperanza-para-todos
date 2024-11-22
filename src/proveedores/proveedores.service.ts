@@ -17,9 +17,27 @@ export class ProveedoresService {
   ){}
 
   async create(createProveedoreDto: CreateProveedoreDto) {
+
+    const userData = {
+      email: createProveedoreDto.email,
+      password: createProveedoreDto.password,
+      fullName: createProveedoreDto.fullName,
+      phoneNumber: createProveedoreDto.phoneNumber,
+      roles: 'Proveedor'
+    };
+    const user = await this.userService.create(userData);
     
-    const user = await this.userService.create(createProveedoreDto);
-    const proveedor = this.proveedorRepository.create({...createProveedoreDto, user});
+    const proveedorData: Partial<Proveedor> = {
+      email:createProveedoreDto.email,
+      password: createProveedoreDto.password,
+      fullName: createProveedoreDto.fullName,
+      phoneNumber:createProveedoreDto.phoneNumber,
+      roles: 'proveedor',
+      type: 'proveedor',
+      contactPerson: createProveedoreDto.contactPerson,
+    };
+    
+    const proveedor = this.proveedorRepository.create(proveedorData);
     await this.proveedorRepository.save(proveedor)
     const {email, fullName, contactPerson, categories, countries, organos} = proveedor;
     return proveedor;

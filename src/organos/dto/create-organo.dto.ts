@@ -1,4 +1,4 @@
-import { IsString,  IsNotEmpty, MinLength, IsEmail, IsArray, ArrayNotEmpty,IsDate, MinDate, MaxDate, isBoolean, IsBoolean, IsBooleanString} from "class-validator";
+import { IsString,  IsNotEmpty, MinLength, IsEmail, IsArray, ArrayNotEmpty,IsDate, MinDate, MaxDate, isBoolean, IsBoolean, IsBooleanString, IsDateString, IsNumberString} from "class-validator";
 
 export class CreateOrganoDto {
 
@@ -11,13 +11,20 @@ export class CreateOrganoDto {
     @IsString()
     bloodType:string;
 
+    @IsString()
+    name:string;
+
     @IsArray()
     HLA:string[];
 
-    @IsBooleanString()
-    isAvailable:string;
-
-    @IsBooleanString()
+    @IsDateString()
     isGood:string;
+
+    @IsNumberString()
+    price:string;
+
+    @IsString()
+    @IsNotEmpty()
+    proveedorId:string; 
 
 }

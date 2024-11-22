@@ -13,9 +13,9 @@ export class OrganosController {
   constructor(private readonly organosService: OrganosService) {}
 
   @Post()
-  @UseGuards(AuthGuard(), UseRoleGuard)
-  create(@Body() createOrganoDto: CreateOrganoDto, @getUser() proveedor: Proveedor) {
-    return this.organosService.create(createOrganoDto, proveedor);
+  //@UseGuards(AuthGuard(), UseRoleGuard)
+  create(@Body() createOrganoDto: CreateOrganoDto) {
+    return this.organosService.create(createOrganoDto);
   }
 
   @Get()

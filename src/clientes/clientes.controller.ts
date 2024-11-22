@@ -44,8 +44,9 @@ export class ClientesController {
     return { updatedCountry };
   }
 
+  /*
   @Post('Comprar')
   comprarOrgano(@Body('id') id:string, @Body('organoId') organoId:string){
     return this.clientesService.comprarOrgano(id, organoId)
-  }
+  }*/
 }

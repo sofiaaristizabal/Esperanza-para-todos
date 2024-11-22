@@ -12,5 +12,8 @@ export class LoginUserDto{
     @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/,
         { message: 'password too weak' })
     password:string;
+
+    @IsString()
+    roles:string; 
     
 }

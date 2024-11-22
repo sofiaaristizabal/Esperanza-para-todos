@@ -1,36 +1,28 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne, BeforeInsert} from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne, BeforeInsert, OneToOne, JoinColumn} from "typeorm";
 import { Organo } from "src/organos/entities/organo.entity";
 import { User } from "src/users/entities/user.entity";
 
 @Entity()
 export class Cliente extends User{
 
-    @Column()
+    @Column({ nullable: true })
     dateOfBirth: string;
 
-    @Column('text')
+    @Column('text', { nullable: true })
     bloodType:string;
 
-    @Column('text', { array: true })    
+    @Column('text', { array: true, nullable: true })    
     HLA: string[];
 
-    @Column('text')
+    @Column('text', { nullable: true })
     country:string;
 
-    @ManyToOne(()=>User, (user)=>user.clientes)
-    user:User;
+    @Column('text')
+    contactPerson:string;
+
+    @Column('text', { nullable: true })
+    type: string;
     
     @OneToMany(()=>Organo, (organo)=>organo.cliente)
     organos:Organo[];
-
-    @BeforeInsert()
-    toLowerCase(){
-        this.country = this.country.toLowerCase();
-    }
-
-    @BeforeInsert()
-    toUpperCase(){
-        this.bloodType = this.bloodType.toUpperCase();
-
-    }
 }
